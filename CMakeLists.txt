@@ -14,3 +14,4 @@ aux_source_directory(./src/netspace/aux NET_AUX)
 
 add_executable("server" ./src/run_server.cpp ${SERVER} ${NET_AUX})
 add_executable("client" ./src/run_client.cpp ${CLIENT} ${NET_AUX})
+target_link_libraries("client" ncurses)

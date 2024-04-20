@@ -4,6 +4,9 @@
 #include "client.h"
 
 class Chat_client: public Client {
+    char input_buffer[1024];
+    int input_index = 0;
+
     void connectServer();
     void handleMessages();
 public:

@@ -3,10 +3,14 @@
 #include "common.h"
 #include <iostream>
 #include <unistd.h>
+#include <curses.h>
+#include <cstring>
 
 Chat_client::Chat_client(std::string server_ad, int port): Client(server_ad, port) {}
 
-Chat_client::~Chat_client(){}
+Chat_client::~Chat_client(){
+    endwin();
+}
 
 void Chat_client::connectServer() {
     Client::connectServer();
@@ -21,7 +25,24 @@ void Chat_client::connectServer() {
 }
 
 void Chat_client::handleMessages() {
+    // Initialize curses
+    initscr(); // Initialize curses mode
+    cbreak(); // Disable line buffering
+    noecho(); // Do not echo input characters
+
+    printw("Welcome!\n");
+    refresh();
+
+    int max_y = getmaxy(stdscr);
+    printw("%d\n", max_y);
+    refresh();
+
+    move(max_y - 1, 0);
+    refresh();
+
     while (true) {
+        refresh();
+
         fd_set fds;
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
@@ -32,9 +53,26 @@ void Chat_client::handleMessages() {
         }
 
         if (FD_ISSET(STDIN_FILENO, &fds)) {
-            std::string msg;
-            std::getline(std::cin, msg);
-            write (m_socket, msg.c_str(), msg.length());
+            char ch;
+            if (read(STDIN_FILENO, &ch, 1) > 0) {
+                if (ch == '\r' || ch == '\n') {
+                    deleteln();
+                    move(getmaxy(stdscr) - 1, 0);
+                    input_buffer[input_index] = '\0';
+                    if (input_index > 0) {
+                        write (m_socket, input_buffer, input_index);
+                        input_index = 0;
+                        memset(input_buffer, 0, sizeof(input_buffer));
+                    }
+                }
+                else if (input_index < sizeof(input_buffer)) {
+                    input_buffer[input_index++] = ch;
+                    mvprintw(getmaxy(stdscr) - 1, 0, "%s", input_buffer);
+                }
+            }
+            // std::string msg;
+            // std::getline(std::cin, msg);
+            // write (m_socket, msg.c_str(), msg.length());
         }
 
         if (FD_ISSET(m_socket, &fds)) {
