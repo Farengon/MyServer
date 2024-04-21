@@ -31,7 +31,7 @@ protected:
     
 public:
     Server(std::string ip_address, int port);
-    ~Server();
+    virtual ~Server();
     void startListen();
 };
 

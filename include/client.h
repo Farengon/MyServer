@@ -19,7 +19,7 @@ protected:
 
 public:
     Client(std::string server_ad, int port);
-    ~Client();
+    virtual ~Client();
     void startConnect();
 };
 

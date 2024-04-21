@@ -32,9 +32,7 @@ void Chat_server::handleClientData(const int fd) {
             std::string msg = client_names[fd] + ": " + std::string(buffer, msg_len);
             std::cout << msg << std::endl;
             for (auto& client : client_names) {
-                if (client.first != fd) {
-                    write(client.first, msg.c_str(), msg.length());
-                }
+                write(client.first, msg.c_str(), msg.length());
             }
         }
     }
