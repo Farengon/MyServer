@@ -1,7 +1,7 @@
 #include "chat_client.h"
 
 int main() {
-    Client* client = new Chat_client("0.0.0.0", 6515);
+    Client* client = new Client("0.0.0.0", 6515);
 
     client->startConnect();
 

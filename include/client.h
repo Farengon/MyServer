@@ -6,8 +6,19 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <string>
+#include <sstream>
+#include <vector>
+#include "layout.h"
 
 class Client {
+
+    Layout* layout;
+    Layout* layouts[2] = {new MainLayout(), new ChatLayout()};
+
+    std::vector<std::string> splitString(const std::string& input, char delimiter);
+
+    int mod;
+
 
 protected:
     int m_socket;

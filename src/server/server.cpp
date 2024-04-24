@@ -3,12 +3,26 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
+#include <sstream>
 
 const int BUFFER_SIZE = 1024;
 const int EPOLL_SIZE = 1024;
 
+std::vector<std::string> Server::splitString(const std::string& input, char delimiter) {
+    std::vector<std::string> tokens;
+    std::stringstream ss(input); // Use a stringstream to parse the input string
+    std::string token;
+
+    // Tokenize the string using the specified delimiter
+    while (std::getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+
+    return tokens;
+}
 
 int Server::createServer() {
+    std::cout << "create" << std::endl;
     if ((m_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         exitWithError("Can not open socket");
@@ -24,14 +38,19 @@ int Server::createServer() {
 
 int Server::closeServer() {
     close(m_socket);
-    exit(0);
+    return 0;
 }
 
 Server::Server(std::string ip_address, int port): m_ip_address(ip_address), m_port(port), m_socket_address_len(sizeof(m_socket_address)) 
 {
+    std::cout << "server" << std::endl;
     m_socket_address.sin_family = AF_INET;
     m_socket_address.sin_port = htons(m_port);
-    m_socket_address.sin_addr.s_addr = inet_addr(m_ip_address.c_str());
+    m_socket_address.sin_addr.s_addr = INADDR_ANY;
+
+    for (auto state = MAIN; state <= END; state = (States)(state+1)) {
+        state_sets.push_back({});
+    }
 
     createServer();
 }
@@ -106,9 +125,34 @@ void Server::handleClientData(const int fd) {
     if (msg_len <= 0) {
         epoll_ctl(ep_fd, EPOLL_CTL_DEL, fd, nullptr);
         close(fd);
+        client_names.erase(fd);
+        state_sets[client_states[fd]].erase(fd);
+        client_states.erase(fd);
         std::cout << "disconnected" << std::endl;
     }
     else {
-        write(fd, buffer, msg_len);
+        std::string msg(buffer, msg_len);
+        std::cout << msg << std::endl;
+        if (client_names.find(fd) == client_names.end()) {
+            client_names[fd] = msg;
+            client_states[fd] = MAIN;
+            state_sets[MAIN].insert(fd);
+            std::cout << "client " << client_names[fd] << " is connected" << std::endl;
+        }
+        else {
+            std::vector<std::string> tokens = splitString(msg, '|');
+            if (tokens[0] == "chmod") {
+                int mod = tokens[1][0] - '0';
+                client_states[fd] = mod;
+                state_sets[mod].insert(fd);
+                write(fd, buffer, msg_len);
+            }
+            else {
+                std::string res = client_names[fd] + "|" + msg;
+                for (auto& client: state_sets[client_states[fd]]) {
+                    write(client, res.c_str(), res.length());
+                }
+            }
+        }
     }
 }

@@ -10,17 +10,15 @@
 
 fd_set fds;
 
-Chat_client::Chat_client(std::string server_ad, int port): Client(server_ad, port) {}
+ChatClient::ChatClient(std::string server_ad, int port): Client(server_ad, port) {}
 
-Chat_client::~Chat_client(){
+ChatClient::~ChatClient(){
     endwin();
 }
 
-void Chat_client::connectServer() {
+void ChatClient::connectServer() {
     Client::connectServer();
-    char prompt[1024];
-    read(m_socket, prompt, sizeof(prompt));
-    std::cout << prompt;
+    std::cout << "Enter your name: ";
 
     std::string name;
     std::getline(std::cin, name);
@@ -28,7 +26,7 @@ void Chat_client::connectServer() {
     write(m_socket, name.c_str(), name.length());
 }
 
-void Chat_client::displayChat() {
+void ChatClient::displayChat() {
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
 
@@ -65,7 +63,7 @@ void handle_resize(int sig) {
     resized = 1;
 }
 
-void Chat_client::handleMessages() {
+void ChatClient::handleMessages() {
 
     signal(SIGWINCH, handle_resize);
 

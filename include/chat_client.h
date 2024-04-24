@@ -4,7 +4,7 @@
 #include "client.h"
 #include <vector>
 
-class Chat_client: public Client {
+class ChatClient: public Client {
     char input_buffer[1024];
     int input_index = 0;
 
@@ -14,8 +14,8 @@ class Chat_client: public Client {
     void handleMessages();
     void displayChat();
 public:
-    Chat_client(std::string server_ad, int port);
-    ~Chat_client();
+    ChatClient(std::string server_ad, int port);
+    ~ChatClient();
 };
 
 #endif

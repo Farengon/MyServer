@@ -1,6 +1,12 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#include <ncurses.h>
+#include <string>
+#include <unistd.h>
+#include <cstring>
+#include <vector>
+
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
 #define GREEN   "\033[32m"

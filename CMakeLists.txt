@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(./include)
 
-aux_source_directory(./src/netspace/client CLIENT)
-aux_source_directory(./src/netspace/server SERVER)
+aux_source_directory(./src/client CLIENT)
+aux_source_directory(./src/server SERVER)
 aux_source_directory(./src/netspace/aux NET_AUX)
 
 add_executable("server" ./src/run_server.cpp ${SERVER} ${NET_AUX})

@@ -4,17 +4,17 @@
 
 const int BUFFER_SIZE = 1024;
 
-Chat_server::Chat_server(std::string ip_address, int port): Server(ip_address, port) {}
+ChatServer::ChatServer(std::string ip_address, int port): Server(ip_address, port) {}
 
-Chat_server::~Chat_server() {}
+ChatServer::~ChatServer() {}
 
-int Chat_server::acceptNewConnection() {
+int ChatServer::acceptNewConnection() {
     int client_fd = Server::acceptNewConnection();
     write(client_fd, "Enter your name: ", 18);
     return client_fd;
 }
 
-void Chat_server::handleClientData(const int fd) {
+void ChatServer::handleClientData(const int fd) {
     char buffer[BUFFER_SIZE];
     int msg_len = read(fd, buffer, BUFFER_SIZE);
     if (msg_len <= 0) {

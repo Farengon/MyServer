@@ -7,8 +7,18 @@
 #include <arpa/inet.h>
 #include <string>
 #include <sys/epoll.h>
+#include <unordered_map>
+#include <vector>
+#include <set>
 
 const int MAX_EVENTS = 10;
+
+enum States{
+    MAIN,
+    CHAT,
+    POKER,
+    END,
+};
 
 class Server {
     int m_socket;
@@ -21,6 +31,15 @@ class Server {
 
     int createServer();
     int closeServer();
+
+    std::unordered_map<int, std::string> client_names;
+    std::unordered_map<int, int> client_states;
+
+    std::vector<std::set<int>> state_sets;
+
+    std::vector<std::string> splitString(const std::string& input, char delimiter);
+
+    void log(const std::string& msg);
 
 protected:
     int ep_fd;
