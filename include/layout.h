@@ -2,6 +2,7 @@
 #define __LAYOUT_H__
 
 #include "common.h"
+#include "table.h"
 
 class Layout {
 protected:
@@ -35,6 +36,17 @@ class ChatLayout: public Layout {
     std::vector<std::string> chat_history;
 public:
     ChatLayout(){};
+    void draw();
+    std::string genMessage();
+    void start(const std::string& msg);
+    void update(const std::string& msg);
+};
+
+class PokerLayout: public Layout {
+    bool active;
+    Table table;
+public:
+    PokerLayout(){};
     void draw();
     std::string genMessage();
     void start(const std::string& msg);

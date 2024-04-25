@@ -1,4 +1,4 @@
-#include "chat_client.h"
+#include "client.h"
 
 int main() {
     Client* client = new Client("0.0.0.0", 6515);

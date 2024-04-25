@@ -1,4 +1,4 @@
-#include "chat_server.h"
+#include "server.h"
 #include <sys/socket.h>
 
 int main() {

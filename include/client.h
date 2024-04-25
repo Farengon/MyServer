@@ -15,8 +15,6 @@ class Client {
     Layout* layout;
     Layout* layouts[2] = {new MainLayout(), new ChatLayout()};
 
-    std::vector<std::string> splitString(const std::string& input, char delimiter);
-
     int mod;
 
 

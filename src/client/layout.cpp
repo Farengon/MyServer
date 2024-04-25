@@ -1,6 +1,8 @@
 #include "layout.h"
 
 void Layout::input(const char ch) {
+    move(getmaxy(stdscr) - 1, 0);
+    clrtoeol();
     if (input_index < sizeof(input_buffer)) {
         input_buffer[input_index++] = ch;
         mvprintw(getmaxy(stdscr) - 1, 0, "%s", input_buffer);

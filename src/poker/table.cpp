@@ -1,6 +1,6 @@
 #include "table.h"
 
-Table::Table(int p_num = 9) {
+Table::Table(int p_num) {
     players.resize(p_num);
     occupied.resize(p_num, false);
 }

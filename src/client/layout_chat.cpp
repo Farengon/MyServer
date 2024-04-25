@@ -22,12 +22,13 @@ std::string ChatLayout::genMessage() {
 void ChatLayout::draw() {
     clear();
 
-    int line = std::min(int(chat_history.size() - 1), getmaxy(stdscr) - 2);
+    int line = std::min(int(chat_history.size() - 1), getmaxy(stdscr) - 3);
     for (int i = chat_history.size() - 1; i >= 0 && line >= 0; --i) {
         move(line--, 0);
         clrtoeol();
         printw("%s", chat_history[i].c_str());
     }
+    mvprintw(getmaxy(stdscr) - 2, 0, "%s", "Send:");
     mvprintw(getmaxy(stdscr) - 1, 0, "%s", input_buffer);
 
     refresh();

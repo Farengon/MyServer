@@ -10,8 +10,9 @@ include_directories(./include)
 
 aux_source_directory(./src/client CLIENT)
 aux_source_directory(./src/server SERVER)
-aux_source_directory(./src/netspace/aux NET_AUX)
+aux_source_directory(./src/aux AUX)
+aux_source_directory(./src/poker POKER)
 
-add_executable("server" ./src/run_server.cpp ${SERVER} ${NET_AUX})
-add_executable("client" ./src/run_client.cpp ${CLIENT} ${NET_AUX})
+add_executable("server" ./src/run_server.cpp ${SERVER} ${AUX})
+add_executable("client" ./src/run_client.cpp ${CLIENT} ${AUX} ${POKER})
 target_link_libraries("client" ncurses)

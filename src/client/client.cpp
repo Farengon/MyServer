@@ -3,21 +3,9 @@
 #include "common.h"
 #include <unistd.h>
 #include <iostream>
+#include <signal.h>
 
 const int BUFFER_SIZE = 1024;
-
-std::vector<std::string> Client::splitString(const std::string& input, char delimiter) {
-    std::vector<std::string> tokens;
-    std::stringstream ss(input); // Use a stringstream to parse the input string
-    std::string token;
-
-    // Tokenize the string using the specified delimiter
-    while (std::getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-
-    return tokens;
-}
 
 Client::Client(std::string server_ad, int port) {
     if ((m_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -60,7 +48,15 @@ void Client::connectServer() {
     write(m_socket, name.c_str(), name.length());
 }
 
+volatile sig_atomic_t resized = 0;
+
+void handle_resize(int sig) {
+    resized = 1;
+}
+
 void Client::handleMessages() {
+
+    signal(SIGWINCH, handle_resize);
 
     initscr(); // Initialize curses mode
     clear();
@@ -70,6 +66,10 @@ void Client::handleMessages() {
     layout->start("");
     
     while(true) {
+        if (resized) {
+            layout->resize();
+            resized = 0;
+        }
         fd_set fds;
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
@@ -90,7 +90,9 @@ void Client::handleMessages() {
             if (read(STDIN_FILENO, &ch, 1) > 0) {
                 if (ch == '\r' || ch == '\n') {
                     std::string msg = layout->genMessage();
-                    write (m_socket, msg.c_str(), msg.length());
+                    if (msg.length() > 0) {
+                        write (m_socket, msg.c_str(), msg.length());
+                    }
                 }
                 else if (ch == 27) {
                     // ESC
